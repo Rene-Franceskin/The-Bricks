@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Bricks</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/jQuery.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="js/script.js"></script>
+</head>
+<body onload="init()">
+  <div class="container">
+    <div class="panel-glow"></div>
+    <h1 class="game-title">The Bricks</h1>
+    <p class="game-hint">
+      Premik:
+      <span class="key">←</span>
+      <span class="key">→</span>
+    </p>
+    <div class="hud">
+      <p class="stat-card">Cas <mark id="cas">00:00</mark></p>
+      <p class="stat-card">Tocke <mark id="tocke">0</mark></p>
+    </div>
+    <div class="canvas-frame">
+      <canvas id="canvas" width="640" height="480"></canvas>
+    </div>
+  </div>
+</body>
+</html>
