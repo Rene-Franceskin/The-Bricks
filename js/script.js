@@ -35,6 +35,7 @@ var NCOLS;
 var BRICKWIDTH;
 var BRICKHEIGHT;
 var PADDING;
+var currentLevel = 1;
 
 function init() {
     ctx = $("#canvas")[0].getContext("2d");
@@ -45,6 +46,7 @@ function init() {
     sekunde = 0;
     izpisTimer = "00:00";
     tocke = 0;
+    $("#level").html(currentLevel);
     $("#cas").html(izpisTimer);
     $("#tocke").html(tocke);
     intervalId = setInterval(draw, 10);
@@ -58,8 +60,16 @@ function init_paddle() {
 }
 
 function initbricks() {
-    NROWS = 5;
-    NCOLS = 5;
+    if (currentLevel == 1) {
+        NROWS = 3;
+        NCOLS = 5;
+    } else if (currentLevel == 2) {
+        NROWS = 4;
+        NCOLS = 6;
+    } else if (currentLevel == 3) {
+        NROWS = 5;
+        NCOLS = 7;
+    }
     BRICKWIDTH = (WIDTH / NCOLS) - 1;
     BRICKHEIGHT = 30;
     PADDING = 1;
@@ -78,6 +88,36 @@ function circle(x, y, r) {
     ctx.arc(x, y, r, 0, Math.PI * 2, true);
     ctx.closePath();
     ctx.fill();
+}
+
+function allBricksDestroyed() {
+    for (var i = 0; i < NROWS; i++) {
+        for (var j = 0; j < NCOLS; j++) {
+            if (bricks[i][j] > 0) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+function nextLevel() {
+    currentLevel++;
+    x = 150;
+    y = 200;
+    dx = 2;
+    dy = 4;
+    start = true;
+    sekunde = 0;
+    izpisTimer = "00:00";
+    $("#level").html(currentLevel);
+    $("#cas").html(izpisTimer);
+    clearInterval(timerId);
+    clearInterval(intervalId);
+    init_paddle();
+    initbricks();
+    intervalId = setInterval(draw, 10);
+    timerId = setInterval(timer, 1000);
 }
 
 function rect(x, y, w, h) {
@@ -181,14 +221,24 @@ function draw() {
     if (y + dy < 0 + r) {
         dy = -dy;
     } else if (y + dy > HEIGHT - (r + f)) {
-        start = false;
-        if (x > paddlex && x < paddlex + paddlew) {
-            dx = 8 * ((x - (paddlex + paddlew / 2)) / paddlew);
-            dy = -dy;
-            start = true;
-        } else if (y + dy > HEIGHT - r) {
-            clearInterval(timerId);
-            clearInterval(intervalId);
+        if (allBricksDestroyed()) {
+            if (currentLevel < 3) {
+                nextLevel();
+            } else {
+                clearInterval(timerId);
+                clearInterval(intervalId);
+                alert("Congratulations! You completed all levels!");
+            }
+        } else {
+            start = false;
+            if (x > paddlex && x < paddlex + paddlew) {
+                dx = 8 * ((x - (paddlex + paddlew / 2)) / paddlew);
+                dy = -dy;
+                start = true;
+            } else if (y + dy > HEIGHT - r) {
+                clearInterval(timerId);
+                clearInterval(intervalId);
+            }
         }
     }
 
