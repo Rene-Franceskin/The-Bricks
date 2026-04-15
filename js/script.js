@@ -1,12 +1,13 @@
 var x = 150;
 var y = 200;
 var dx = 2;
-var dy = 4;
+var dy = -4;
 var WIDTH;
 var HEIGHT;
 var r = 10;
 var f = 0;
 var ctx;
+var canvas;
 var intervalId;
 var timerId;
 
@@ -35,12 +36,66 @@ var NCOLS;
 var BRICKWIDTH;
 var BRICKHEIGHT;
 var PADDING;
+var BRICKGAPX;
+var BRICKGAPY;
+var BRICKOFFSETTOP;
+var BRICKOFFSETSIDE;
 var currentLevel = 1;
+var gamePaused = false;
+
+function resetBall() {
+    x = WIDTH / 2;
+    y = HEIGHT / 2;
+    dx = 0;
+    dy = -4;
+}
+
+function stopGameLoop() {
+    clearInterval(timerId);
+    clearInterval(intervalId);
+}
+
+function startGameLoop() {
+    intervalId = setInterval(draw, 10);
+    timerId = setInterval(timer, 1000);
+}
+
+function showLevelCompleteAlert(completedLevel) {
+    gamePaused = true;
+    start = false;
+    stopGameLoop();
+
+    Swal.fire({
+        title: "Koncal si level " + completedLevel,
+        text: "Pojdi v level " + (completedLevel + 1) + ".",
+        icon: "success",
+        confirmButtonText: "Igraj"
+    }).then(function(result) {
+        if (result.isConfirmed) {
+            nextLevel();
+        }
+    });
+}
+
+function showGameCompletedAlert() {
+    gamePaused = true;
+    start = false;
+    stopGameLoop();
+
+    Swal.fire({
+        title: "Cestitke!",
+        text: "Koncal si vse levele.",
+        icon: "success",
+        confirmButtonText: "Super"
+    });
+}
 
 function init() {
-    ctx = $("#canvas")[0].getContext("2d");
-    WIDTH = $("#canvas").width();
-    HEIGHT = $("#canvas").height();
+    canvas = $("#canvas")[0];
+    ctx = canvas.getContext("2d");
+    WIDTH = canvas.width;
+    HEIGHT = canvas.height;
+    resetBall();
     init_paddle();
     initbricks();
     sekunde = 0;
@@ -49,28 +104,32 @@ function init() {
     $("#level").html(currentLevel);
     $("#cas").html(izpisTimer);
     $("#tocke").html(tocke);
-    intervalId = setInterval(draw, 10);
-    timerId = setInterval(timer, 1000);
+    gamePaused = false;
+    startGameLoop();
 }
 
 function init_paddle() {
-    paddlex = WIDTH / 2;
+    paddlex = WIDTH / 2.27;
     paddleh = 10;
     paddlew = 100;
 }
 
 function initbricks() {
     if (currentLevel == 1) {
+        NROWS = 2;
+        NCOLS = 4;
+    } else if (currentLevel == 2) {
         NROWS = 3;
         NCOLS = 5;
-    } else if (currentLevel == 2) {
+    } else if (currentLevel == 3) {
         NROWS = 4;
         NCOLS = 6;
-    } else if (currentLevel == 3) {
-        NROWS = 5;
-        NCOLS = 7;
     }
-    BRICKWIDTH = (WIDTH / NCOLS) - 1;
+    BRICKGAPX = 28;
+    BRICKGAPY = 20;
+    BRICKOFFSETTOP = 32;
+    BRICKOFFSETSIDE = 20;
+    BRICKWIDTH = (WIDTH - (BRICKOFFSETSIDE * 2) - (BRICKGAPX * (NCOLS - 1))) / NCOLS;
     BRICKHEIGHT = 30;
     PADDING = 1;
     bricks = new Array(NROWS);
@@ -78,7 +137,7 @@ function initbricks() {
     for (var i = 0; i < NROWS; i++) {
         bricks[i] = new Array(NCOLS);
         for (var j = 0; j < NCOLS; j++) {
-            bricks[i][j] = Math.floor(Math.random() * 3) + 1;
+            bricks[i][j] = Math.floor(Math.random() * 4) + 0;
         }
     }
 }
@@ -103,21 +162,17 @@ function allBricksDestroyed() {
 
 function nextLevel() {
     currentLevel++;
-    x = 150;
-    y = 200;
-    dx = 2;
-    dy = 4;
+    resetBall();
     start = true;
     sekunde = 0;
     izpisTimer = "00:00";
     $("#level").html(currentLevel);
     $("#cas").html(izpisTimer);
-    clearInterval(timerId);
-    clearInterval(intervalId);
+    stopGameLoop();
     init_paddle();
     initbricks();
-    intervalId = setInterval(draw, 10);
-    timerId = setInterval(timer, 1000);
+    gamePaused = false;
+    startGameLoop();
 }
 
 function rect(x, y, w, h) {
@@ -129,6 +184,8 @@ function rect(x, y, w, h) {
 
 function clear() {
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
+    ctx.fillStyle = "#1c284c";
+    ctx.fillRect(0, 0, WIDTH, HEIGHT);
 }
 
 function timer() {
@@ -167,6 +224,10 @@ $(document).keydown(onKeyDown);
 $(document).keyup(onKeyUp);
 
 function draw() {
+    if (gamePaused) {
+        return;
+    }
+
     clear();
     ctx.fillStyle = ballcolor;
     circle(x, y, 10);
@@ -193,8 +254,8 @@ function draw() {
             if (bricks[i][j] > 0) {
                 ctx.fillStyle = brickcolors[bricks[i][j]];
                 rect(
-                    (j * (BRICKWIDTH + PADDING)) + PADDING,
-                    (i * (BRICKHEIGHT + PADDING)) + PADDING,
+                    BRICKOFFSETSIDE + (j * (BRICKWIDTH + BRICKGAPX)),
+                    BRICKOFFSETTOP + (i * (BRICKHEIGHT + BRICKGAPY)),
                     BRICKWIDTH,
                     BRICKHEIGHT
                 );
@@ -202,16 +263,39 @@ function draw() {
         }
     }
 
-    var rowheight = BRICKHEIGHT + PADDING + f / 2;
-    var colwidth = BRICKWIDTH + PADDING + f / 2;
-    var row = Math.floor(y / rowheight);
-    var col = Math.floor(x / colwidth);
+    var hitBrick = false;
 
-    if (y < NROWS * rowheight && row >= 0 && col >= 0 && col < NCOLS && bricks[row][col] > 0) {
-        dy = -dy;
-        bricks[row][col] --;
-        tocke ++;
-        $("#tocke").html(tocke);
+    for (var i = 0; i < NROWS && !hitBrick; i++) {
+        for (var j = 0; j < NCOLS && !hitBrick; j++) {
+            if (bricks[i][j] <= 0) {
+                continue;
+            }
+
+            var brickX = BRICKOFFSETSIDE + (j * (BRICKWIDTH + BRICKGAPX));
+            var brickY = BRICKOFFSETTOP + (i * (BRICKHEIGHT + BRICKGAPY));
+
+            if (
+                x + r > brickX &&
+                x - r < brickX + BRICKWIDTH &&
+                y + r > brickY &&
+                y - r < brickY + BRICKHEIGHT
+            ) {
+                dy = -dy;
+                bricks[i][j]--;
+                tocke++;
+                $("#tocke").html(tocke);
+                hitBrick = true;
+
+                if (allBricksDestroyed()) {
+                    if (currentLevel < 3) {
+                        showLevelCompleteAlert(currentLevel);
+                    } else {
+                        showGameCompletedAlert();
+                    }
+                    return;
+                }
+            }
+        }
     }
 
     if (x + dx > WIDTH - r || x + dx < 0 + r) {
@@ -221,24 +305,13 @@ function draw() {
     if (y + dy < 0 + r) {
         dy = -dy;
     } else if (y + dy > HEIGHT - (r + f)) {
-        if (allBricksDestroyed()) {
-            if (currentLevel < 3) {
-                nextLevel();
-            } else {
-                clearInterval(timerId);
-                clearInterval(intervalId);
-                alert("Congratulations! You completed all levels!");
-            }
-        } else {
-            start = false;
-            if (x > paddlex && x < paddlex + paddlew) {
-                dx = 8 * ((x - (paddlex + paddlew / 2)) / paddlew);
-                dy = -dy;
-                start = true;
-            } else if (y + dy > HEIGHT - r) {
-                clearInterval(timerId);
-                clearInterval(intervalId);
-            }
+        start = false;
+        if (x > paddlex && x < paddlex + paddlew) {
+            dx = 8 * ((x - (paddlex + paddlew / 2)) / paddlew);
+            dy = -dy;
+            start = true;
+        } else if (y + dy > HEIGHT - r) {
+            stopGameLoop();
         }
     }
 
