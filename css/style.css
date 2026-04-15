@@ -45,6 +45,38 @@ body {
         0 0 36px rgba(127, 77, 255, 0.2);
 }
 
+.resume-btn {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    z-index: 2;
+    padding: 10px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: linear-gradient(180deg, #4f33a6, #341f65);
+    color: #ffffff;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+        0 8px 20px rgba(0, 0, 0, 0.22);
+}
+
+.resume-btn:hover {
+    transform: translateY(-1px);
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+        0 12px 26px rgba(0, 0, 0, 0.28);
+}
+
+.resume-btn:active {
+    transform: translateY(0);
+}
+
 .panel-glow {
     position: absolute;
     inset: 18px;

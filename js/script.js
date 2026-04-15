@@ -53,17 +53,31 @@ function resetBall() {
 function stopGameLoop() {
     clearInterval(timerId);
     clearInterval(intervalId);
+    timerId = null;
+    intervalId = null;
 }
 
 function startGameLoop() {
+    stopGameLoop();
     intervalId = setInterval(draw, 10);
     timerId = setInterval(timer, 1000);
+}
+
+function updateResumeButton() {
+    $("#resume-btn").text(gamePaused ? "Resume" : "Pause");
+}
+
+function toggleGamePause() {
+    gamePaused = !gamePaused;
+    start = !gamePaused;
+    updateResumeButton();
 }
 
 function showLevelCompleteAlert(completedLevel) {
     gamePaused = true;
     start = false;
     stopGameLoop();
+    updateResumeButton();
 
     Swal.fire({
         title: "Koncal si level " + completedLevel,
@@ -81,6 +95,7 @@ function showGameCompletedAlert() {
     gamePaused = true;
     start = false;
     stopGameLoop();
+    updateResumeButton();
 
     Swal.fire({
         title: "Cestitke!",
@@ -104,7 +119,9 @@ function init() {
     $("#level").html(currentLevel);
     $("#cas").html(izpisTimer);
     $("#tocke").html(tocke);
+    $("#resume-btn").on("click", toggleGamePause);
     gamePaused = false;
+    updateResumeButton();
     startGameLoop();
 }
 
@@ -172,6 +189,7 @@ function nextLevel() {
     init_paddle();
     initbricks();
     gamePaused = false;
+    updateResumeButton();
     startGameLoop();
 }
 
@@ -192,14 +210,13 @@ function timer() {
     var sekundeI;
     var minuteI;
 
-    if (start == true) {
+    if (start == true && gamePaused == false) {
         sekunde++;
         sekundeI = ((sekundeI = (sekunde % 60)) > 9) ? sekundeI : "0" + sekundeI;
         minuteI = ((minuteI = Math.floor(sekunde / 60)) > 9) ? minuteI : "0" + minuteI;
         izpisTimer = minuteI + ":" + sekundeI;
         $("#cas").html(izpisTimer);
     } else {
-        sekunde = 0;
         $("#cas").html(izpisTimer);
     }
 }
