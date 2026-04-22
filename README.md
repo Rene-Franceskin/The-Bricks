@@ -23,31 +23,6 @@ Pritisni gumb **Start** za začetek igre. Palico premikaš s tipkama `←` in `�
 - Level 2: 3 vrste × 5 stolpcev zidakov
 - Level 3: 4 vrste × 6 stolpcev zidakov
 
-## 🚀 Zagon
-
-Odpri `index.html` v brskalniku – ni potrebno nobeno nameščanje.
-
-## 📁 Struktura projekta
-
-```
-The-Bricks/
-├── index.html
-├── css/
-│   └── style.css
-├── js/
-│   ├── jQuery.js
-│   └── script.js
-└── img/
-    └── favicon.png
-```
-
-## 🛠️ Tehnologije
-
-- HTML5 Canvas
-- CSS3
-- JavaScript (jQuery)
-- SweetAlert2 za pojavna okna
-
-## ✍️ Avto
+## ✍️ Avtor
 
 Rene Frančeškin
