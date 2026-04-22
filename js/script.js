@@ -18,7 +18,8 @@ var brickcolors = {
     2: "#8d63ff",
     3: "#ff6ba2"
 };
-var start = true;
+var start = false;
+var gameStarted = false;
 var tocke;
 var sekunde;
 var izpisTimer;
@@ -68,9 +69,46 @@ function updateResumeButton() {
 }
 
 function toggleGamePause() {
+    if (!gameStarted) {
+        return;
+    }
     gamePaused = !gamePaused;
     start = !gamePaused;
     updateResumeButton();
+}
+
+function startGame() {
+    if (gameStarted) {
+        return;
+    }
+    gameStarted = true;
+    gamePaused = false;
+    start = true;
+    updateResumeButton();
+    startGameLoop();
+}
+
+function info() {
+    Swal.fire({
+        text: "Avtor: Rene Frančeškin",
+        icon: "success",
+        confirmButtonText: "Igraj"
+    });
+}
+
+function resetLevel() {
+    stopGameLoop();
+    resetBall();
+    init_paddle();
+    initbricks();
+    sekunde = 0;
+    izpisTimer = "00:00";
+    $("#cas").html(izpisTimer);
+    gamePaused = false;
+    gameStarted = false;
+    start = false;
+    updateResumeButton();
+    drawInitialScene();
 }
 
 function showLevelCompleteAlert(completedLevel) {
@@ -120,9 +158,35 @@ function init() {
     $("#cas").html(izpisTimer);
     $("#tocke").html(tocke);
     $("#resume-btn").on("click", toggleGamePause);
+    $("#start-btn").on("click", startGame);
+    $("#reset-btn").on("click", resetLevel);
+    $("#info-key").on("click", info);
     gamePaused = false;
+    gameStarted = false;
+    start = false;
     updateResumeButton();
-    startGameLoop();
+    drawInitialScene();
+}
+
+function drawInitialScene() {
+    clear();
+    ctx.fillStyle = paddlecolor;
+    rect(paddlex, HEIGHT - paddleh, paddlew, paddleh);
+    ctx.fillStyle = ballcolor;
+    circle(x, y, 10);
+    for (var i = 0; i < NROWS; i++) {
+        for (var j = 0; j < NCOLS; j++) {
+            if (bricks[i][j] > 0) {
+                ctx.fillStyle = brickcolors[bricks[i][j]];
+                rect(
+                    BRICKOFFSETSIDE + (j * (BRICKWIDTH + BRICKGAPX)),
+                    BRICKOFFSETTOP + (i * (BRICKHEIGHT + BRICKGAPY)),
+                    BRICKWIDTH,
+                    BRICKHEIGHT
+                );
+            }
+        }
+    }
 }
 
 function init_paddle() {
@@ -180,7 +244,7 @@ function allBricksDestroyed() {
 function nextLevel() {
     currentLevel++;
     resetBall();
-    start = true;
+    start = false;
     sekunde = 0;
     izpisTimer = "00:00";
     $("#level").html(currentLevel);
@@ -189,8 +253,9 @@ function nextLevel() {
     init_paddle();
     initbricks();
     gamePaused = false;
+    gameStarted = false;
     updateResumeButton();
-    startGameLoop();
+    drawInitialScene();
 }
 
 function rect(x, y, w, h) {

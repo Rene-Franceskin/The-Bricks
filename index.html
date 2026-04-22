@@ -12,13 +12,12 @@
 </head>
 <body onload="init()">
   <div class="container">
-    <button id="resume-btn" class="resume-btn" type="button">Resume</button>
     <div class="panel-glow"></div>
     <h1 class="game-title">Block Blast Bricks</h1>
     <p class="game-hint">
       Premik:
       <span class="key">←</span>
-      <span class="key">→</span>
+      <span id="info-key" class="key">→</span>
     </p>
     <div class="hud">
       <p class="stat-card">Level <label id="level">1</label></p>
@@ -27,6 +26,11 @@
     </div>
     <div class="canvas-frame">
       <canvas id="canvas" width="1000" height="480"></canvas>
+    </div>
+    <div class="controls">
+      <button id="start-btn" class="control-btn" type="button">Start</button>
+      <button id="resume-btn" class="control-btn resume-btn" type="button">Pause</button>
+      <button id="reset-btn" class="control-btn" type="button">Reset</button>
     </div>
   </div>
 </body>

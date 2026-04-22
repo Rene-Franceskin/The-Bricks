@@ -45,12 +45,17 @@ body {
         0 0 36px rgba(127, 77, 255, 0.2);
 }
 
-.resume-btn {
-    position: absolute;
-    top: 18px;
-    right: 18px;
-    z-index: 2;
-    padding: 10px 20px;
+.controls {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.control-btn {
+    padding: 10px 24px;
     border: 1px solid rgba(255, 255, 255, 0.18);
     background: linear-gradient(180deg, #4f33a6, #341f65);
     color: #ffffff;
@@ -60,20 +65,20 @@ body {
     letter-spacing: 0.04em;
     text-transform: uppercase;
     cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
     box-shadow:
         0 0 0 1px rgba(255, 255, 255, 0.04) inset,
         0 8px 20px rgba(0, 0, 0, 0.22);
 }
 
-.resume-btn:hover {
+.control-btn:hover {
     transform: translateY(-1px);
     box-shadow:
         0 0 0 1px rgba(255, 255, 255, 0.04) inset,
         0 12px 26px rgba(0, 0, 0, 0.28);
 }
 
-.resume-btn:active {
+.control-btn:active {
     transform: translateY(0);
 }
 
@@ -117,6 +122,18 @@ body {
     box-shadow:
         0 0 0 1px rgba(255, 255, 255, 0.04) inset,
         0 8px 20px rgba(0, 0, 0, 0.22);
+}
+
+.key-clickable {
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.key-clickable:hover {
+    transform: translateY(-1px);
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+        0 12px 26px rgba(12, 245, 255, 0.35);
 }
 
 .hud {
