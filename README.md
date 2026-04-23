@@ -1,4 +1,4 @@
-<h1 align="center"># 🎮 Block Blast Bricks</h1>
+<h1 align="center">🎮 Block Blast Bricks</h1>
 
 Klasična arkadna igra v slogu "break bricks", narejena z uporabo HTML5 Canvas, CSS in jQuery.
 
