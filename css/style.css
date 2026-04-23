@@ -71,17 +71,6 @@ body {
         0 8px 20px rgba(0, 0, 0, 0.22);
 }
 
-.control-btn:hover {
-    transform: translateY(-1px);
-    box-shadow:
-        0 0 0 1px rgba(255, 255, 255, 0.04) inset,
-        0 12px 26px rgba(0, 0, 0, 0.28);
-}
-
-.control-btn:active {
-    transform: translateY(0);
-}
-
 .panel-glow {
     position: absolute;
     inset: 18px;
@@ -129,12 +118,6 @@ body {
     transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.key-clickable:hover {
-    transform: translateY(-1px);
-    box-shadow:
-        0 0 0 1px rgba(255, 255, 255, 0.04) inset,
-        0 12px 26px rgba(12, 245, 255, 0.35);
-}
 
 .hud {
     position: relative;
